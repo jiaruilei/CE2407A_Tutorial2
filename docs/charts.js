@@ -35,17 +35,25 @@
   function text(parent, x, y, content, attrs) { return add(parent, 'text', Object.assign({ x, y, fill: C.muted, 'font-size': 13 }, attrs), content); }
   function figure(container, title, description, note) {
     const fig = html(container, 'figure'); fig.className = 'tutorial-chart';
-    Object.assign(fig.style, { margin: '0 0 18px', padding: '14px', border: '1px solid ' + C.grid, borderRadius: '12px', background: '#fff', minWidth: '0' });
-    const heading = html(fig, 'figcaption', title); Object.assign(heading.style, { fontSize: '16px', fontWeight: '700', color: C.ink, marginBottom: '8px' });
+    Object.assign(fig.style, { margin: '0', padding: '10px', border: '1px solid ' + C.grid, borderRadius: '10px', background: '#fff', minWidth: '0' });
+    const heading = html(fig, 'figcaption', title); Object.assign(heading.style, { fontSize: '15px', fontWeight: '700', color: C.ink, marginBottom: '4px' });
     const svg = add(fig, 'svg', { viewBox: '0 0 560 300', role: 'img', 'aria-labelledby': 'chart-title-' + (++serial) + ' chart-desc-' + serial, preserveAspectRatio: 'xMidYMid meet' });
     Object.assign(svg.style, { display: 'block', width: '100%', height: 'auto', overflow: 'visible', fontFamily: 'inherit' });
     add(svg, 'title', { id: 'chart-title-' + serial }, title);
     add(svg, 'desc', { id: 'chart-desc-' + serial }, description);
-    if (note) { const para = html(fig, 'p', note); Object.assign(para.style, { margin: '6px 0 0', color: C.muted, fontSize: '14px', lineHeight: '1.45' }); }
+    if (note) {
+      const para = html(fig, 'p');
+      Object.assign(para.style, { margin: '4px 0 0', color: C.muted, fontSize: '13px', lineHeight: '1.4' });
+      if (typeof note === 'object') {
+        para.className = 'chart-formula';
+        const formula = html(para, 'span', note.text);
+        formula.setAttribute('data-tex', note.tex);
+      } else para.textContent = note;
+    }
     return { fig, svg };
   }
   function legend(fig, entries) {
-    const row = html(fig, 'div'); Object.assign(row.style, { display: 'flex', flexWrap: 'wrap', gap: '5px 18px', fontSize: '13px', color: C.muted, marginTop: '6px' });
+    const row = html(fig, 'div'); Object.assign(row.style, { display: 'flex', flexWrap: 'wrap', gap: '4px 14px', fontSize: '13px', color: C.muted, marginTop: '4px' });
     for (const entry of entries) {
       const item = html(row, 'span'); Object.assign(item.style, { display: 'inline-flex', alignItems: 'center', gap: '6px' });
       const swatch = html(item, 'span'); Object.assign(swatch.style, { display: 'inline-block', width: '16px', height: '4px', background: entry[1], borderRadius: '2px' });
@@ -133,14 +141,14 @@
     const xmin = Math.min(mean - 4 * sd, -0.5 * sd), xmax = Math.max(mean + 4 * sd, 0.5 * sd);
     const pdf = x => normal(x, mean, sd);
     const chart = plot(container, title, 'Normal safety margin with mean ' + fmt(mean) + ' and standard deviation ' + fmt(sd) + '. The orange left tail below zero is the failure probability, ' + pct(risk) + '.', { xmin, xmax, ymax: pdf(mean) * 1.12, xlabel, note });
-    chart.shade(pdf, xmin, 0); chart.curve(pdf); chart.marker(0, 'Failure boundary: 0');
-    legend(chart.fig, [['Safety margin density', C.blue], ['Failure: ' + pct(risk), C.orange]]);
+    chart.shade(pdf, xmin, 0); chart.curve(pdf); chart.marker(0, 'Failure boundary');
+    legend(chart.fig, [['PDF', C.blue], ['Failure: ' + pct(risk), C.orange]]);
     return chart;
   }
   function q1(container, v, r) {
-    bars(container, 'How many jobs will be won?', r.pmf, { xlabel: 'Number of jobs, x', ylabel: 'PMF  P(X = x)', highlight: i => i === 1 || i === 2, note: 'Orange bars represent 0 < X ≤ 2. Each bar is a probability, so the four heights sum to 1.', legend: [['Other outcomes', C.blue], ['1 or 2 jobs: ' + pct(r.between), C.orange]] });
+    bars(container, 'Jobs won · PMF', r.pmf, { xlabel: 'Jobs, x', ylabel: 'Probability', highlight: i => i === 1 || i === 2, legend: [['0 or 3 jobs', C.blue], ['1 or 2 jobs: ' + pct(r.between), C.orange]] });
     const cdf = r.cdf;
-    const chart = plot(container, 'Cumulative probability', 'The right-continuous CDF jumps to ' + cdf.map(fmt).join(', ') + ' at x = 0, 1, 2, 3.', { xmin: -0.5, xmax: 3.5, ymax: 1.05, ylabel: 'CDF  F(x) = P(X ≤ x)', xlabel: 'Number of jobs, x', xticks: [0, 1, 2, 3], note: 'Filled dots include the jump value. Open dots show the value just before each jump.' });
+    const chart = plot(container, 'CDF', 'The right-continuous CDF jumps to ' + cdf.map(fmt).join(', ') + ' at x = 0, 1, 2, 3. Filled dots include the jump value; open dots exclude it.', { xmin: -0.5, xmax: 3.5, ymax: 1.05, ylabel: 'F(x)', xlabel: 'Jobs, x', xticks: [0, 1, 2, 3] });
     chart.path([[-0.5, 0], [0, 0]]);
     cdf.forEach((p, i) => chart.path([[i, p], [i === cdf.length - 1 ? 3.5 : i + 1, p]]));
     cdf.forEach((p, i) => {
@@ -152,10 +160,10 @@
     const a = number(v, ['lo', 'a', 'lower'], 10), b = number(v, ['hi', 'b', 'upper'], 20), cut = number(v, ['r', 'cutoff', 'threshold'], 15), width = b - a;
     const pdf = x => root.TutorialCalc ? root.TutorialCalc.quadraticPDF(x, a, b) : (x >= a && x <= b ? 6 * (x - a) * (b - x) / Math.pow(width, 3) : 0);
     const cdf = x => { if (root.TutorialCalc) return root.TutorialCalc.quadraticCDF(x, a, b); const u = Math.max(0, Math.min(1, (x - a) / width)); return 3 * u * u - 2 * u * u * u; };
-    const chart = plot(container, 'Area under the density', 'The symmetric parabolic probability density on ' + a + ' to ' + b + '. The shaded area is P(R ≤ ' + fmt(cut) + ') = ' + fmt(cdf(cut)) + '.', { xmin: a - width * .08, xmax: b + width * .08, ymax: 1.5 / width * 1.18, xlabel: 'Value of R', note: 'A PDF height is a density. Probability is an area under the curve.' });
+    const chart = plot(container, 'PDF', 'The symmetric parabolic probability density on ' + a + ' to ' + b + '. The shaded area is P(R ≤ ' + fmt(cut) + ') = ' + fmt(cdf(cut)) + '.', { xmin: a - width * .08, xmax: b + width * .08, ymax: 1.5 / width * 1.18, xlabel: 'r' });
     chart.shade(pdf, a, cut, C.pale); chart.curve(pdf); chart.marker(cut, 'r = ' + fmt(cut), C.blue);
-    legend(chart.fig, [['Density fR(r)', C.blue], ['Area to r: ' + pct(cdf(cut)), C.pale]]);
-    const second = plot(container, 'The CDF accumulates that area', 'The CDF is 0 below ' + a + ', rises smoothly to 1, and stays at 1 above ' + b + '.', { xmin: a - width * .08, xmax: b + width * .08, ymax: 1.08, ylabel: 'Cumulative probability', xlabel: 'Value of R', note: 'Inside the interval, F(r) = 3u² − 2u³, where u = (r − ' + a + ')/' + fmt(width) + '.' });
+    legend(chart.fig, [['PDF', C.blue], ['Area to r: ' + pct(cdf(cut)), C.pale]]);
+    const second = plot(container, 'CDF', 'The CDF is 0 below ' + a + ', rises smoothly to 1, and stays at 1 above ' + b + '.', { xmin: a - width * .08, xmax: b + width * .08, ymax: 1.08, ylabel: 'F(r)', xlabel: 'r', note: { text: 'F(r) = 3u² − 2u³, u = (r − a)/(b − a), a ≤ r ≤ b', tex: 'F_R(r)=3u^2-2u^3,\\quad u=\\frac{r-a}{b-a},\\quad a\\le r\\le b' } });
     second.curve(cdf); second.marker(cut, 'F(r) = ' + fmt(cdf(cut)), C.blue);
     if (cut >= second.xmin && cut <= second.xmax) add(second.layer, 'circle', { cx: second.X(cut), cy: second.Y(cdf(cut)), r: 4, fill: C.blue });
   }
@@ -163,47 +171,47 @@
     const mean = number(v, ['mean', 'mu', 'currentMean', 'mean0'], 200), sd = number(v, ['sd', 'sigma', 'currentSD', 'sd0'], 60), capacity = number(v, ['capacity', 'cap'], 350);
     const xmin = Math.min(mean - 4 * sd, r.futureMean - 4 * r.futureSD, capacity - sd), xmax = Math.max(mean + 4 * sd, r.futureMean + 4 * r.futureSD, capacity + sd);
     const now = x => normal(x, mean, sd), future = x => normal(x, r.futureMean, r.futureSD);
-    const chart = plot(container, 'Traffic growth and runway capacity', 'The current normal traffic distribution and projected distribution are shown against runway capacity. Current congestion risk is ' + pct(r.currentRisk) + '; projected congestion risk is ' + pct(r.futureRisk) + '.', { xmin, xmax, ymax: Math.max(now(mean), future(r.futureMean)) * 1.16, xlabel: 'Peak-hour traffic (planes/hour)', note: 'Orange shading is projected traffic above capacity. The mean grows linearly; the COV stays constant.' });
+    const chart = plot(container, 'Traffic & capacity', 'The current normal traffic distribution and projected distribution are shown against runway capacity. Current congestion risk is ' + pct(r.currentRisk) + '; projected congestion risk is ' + pct(r.futureRisk) + '. Orange shading is projected traffic above capacity. The mean grows linearly and the COV stays constant.', { xmin, xmax, ymax: Math.max(now(mean), future(r.futureMean)) * 1.16, xlabel: 'Peak-hour traffic (planes/hour)' });
     chart.shade(future, capacity, xmax); chart.curve(now, C.blue); chart.curve(future, C.orange); chart.marker(capacity, 'Capacity ' + fmt(capacity));
-    legend(chart.fig, [['Present: ' + pct(r.currentRisk) + ' congestion', C.blue], ['Projected: ' + pct(r.futureRisk), C.orange]]);
+    legend(chart.fig, [['Current risk: ' + pct(r.currentRisk), C.blue], ['Future risk: ' + pct(r.futureRisk), C.orange]]);
   }
   function q4(container, v, r) {
-    bars(container, 'How many storms occur in a year?', r.pmf, { xlabel: 'Storms per year, n', ylabel: 'PMF  P(N = n)', note: 'Annual flooding combines the storm-count probabilities with the chance of at least one flood in each case.' });
+    bars(container, 'Storm count · PMF', r.pmf, { xlabel: 'Storms per year, n', ylabel: 'Probability' });
     const capacity = number(v, ['capacity', 'threshold', 'runoffCapacity'], 8), median = Math.exp(r.lambda);
     const xmin = 0, xmax = Math.max(Math.exp(r.lambda + 3.3 * r.zeta), capacity * 1.15), mode = Math.exp(r.lambda - r.zeta * r.zeta);
     const pdf = x => root.TutorialCalc ? root.TutorialCalc.lognormalPDF(x, r.lambda, r.zeta) : (x > 0 ? normal(Math.log(x), r.lambda, r.zeta) / x : 0);
-    const chart = plot(container, 'Runoff from one storm', 'Lognormal runoff has median ' + fmt(median) + ' cubic feet per second. Flooding is the orange area above the capacity ' + capacity + ', with probability ' + pct(r.stormRisk) + '.', { xmin, xmax, ymax: pdf(mode) * 1.14, xlabel: 'Maximum runoff (cfs)', note: 'Per-storm risk: ' + pct(r.stormRisk) + '. Risk of one or more floods in a year: ' + pct(r.annualRisk) + '.' });
+    const chart = plot(container, 'Runoff PDF', 'Lognormal runoff has median ' + fmt(median) + ' cubic feet per second. Flooding is the orange area above the capacity ' + capacity + ', with probability ' + pct(r.stormRisk) + '.', { xmin, xmax, ymax: pdf(mode) * 1.14, xlabel: 'Maximum runoff (cfs)', note: 'Flood risk: ' + pct(r.stormRisk) + '/storm; ' + pct(r.annualRisk) + '/year.' });
     chart.shade(pdf, capacity, xmax); chart.curve(pdf); chart.marker(capacity, 'Capacity ' + fmt(capacity) + ' cfs');
-    legend(chart.fig, [['Runoff density', C.blue], ['Flooding in one storm', C.orange]]);
+    legend(chart.fig, [['PDF', C.blue], ['Flooding', C.orange]]);
   }
   function q5(container, v, r) {
     const stop = Math.max(5, Math.min(20, Math.ceil(r.mu + 3 * Math.sqrt(r.mu + 1))));
     const labels = Array.from({ length: stop + 1 }, (_, i) => i === stop ? '≥' + stop : String(i));
-    bars(container, 'Stations within the remaining driving range', poissonSeries(r.mu, stop), { labels, xlabel: 'Number of service stations', ylabel: 'Poisson probability', highlight: i => i < 2, note: 'Orange bars are 0 or 1 station: ' + pct(r.atMostOne) + '. The final bar groups all higher counts.', legend: [['0 or 1 station', C.orange], ['2 or more stations', C.blue]] });
-    bars(container, 'Stations with gasoline available', poissonSeries(r.availableMu, stop), { labels, xlabel: 'Number of stations with gasoline', ylabel: 'Poisson probability', highlight: i => i === 0, note: 'Independent availability thins the Poisson process. Being stranded means zero stations with gasoline: ' + pct(r.stranded) + '.', legend: [['No usable station: stranded', C.orange], ['At least one usable station', C.blue]] });
+    bars(container, 'Stations in range', poissonSeries(r.mu, stop), { labels, xlabel: 'Service stations', ylabel: 'Poisson probability', highlight: i => i < 2, legend: [['0–1 stations: ' + pct(r.atMostOne), C.orange], ['2+ stations', C.blue]] });
+    bars(container, 'Stations with gasoline', poissonSeries(r.availableMu, stop), { labels, xlabel: 'Stations with gasoline', ylabel: 'Poisson probability', highlight: i => i === 0, note: 'Independent gasoline availability.', legend: [['Stranded: ' + pct(r.stranded), C.orange], ['1+ usable stations', C.blue]] });
   }
   function q6(container, v, r) {
     const rate = r.rate, xmax = Math.max(4 / rate, r.cycleHours * 1.3), density = x => rate * Math.exp(-rate * x);
-    const chart = plot(container, 'Can the lock finish before the next arrival?', 'Exponential interarrival times at rate ' + fmt(rate) + ' per hour. The blue shaded tail beyond cycle time is the probability of no waiting: ' + pct(1 - r.waitProbability) + '.', { xmin: 0, xmax, ymax: rate * 1.12, xlabel: 'Interarrival time (hours)', note: 'A boat does not wait in the tutorial model when the interarrival time exceeds the lock cycle time.' });
+    const chart = plot(container, 'Arrival time & lock cycle', 'Exponential interarrival times at rate ' + fmt(rate) + ' per hour. The blue shaded tail beyond cycle time is the probability of no waiting: ' + pct(1 - r.waitProbability) + '.', { xmin: 0, xmax, ymax: rate * 1.12, xlabel: 'Interarrival time (hours)', note: { text: 'No wait: T > cycle time', tex: '\\text{No wait: }T>t_{\\mathrm{cycle}}' } });
     chart.shade(density, r.cycleHours, xmax, C.pale); chart.curve(density); chart.marker(r.cycleHours, 'Cycle: ' + fmt(r.cycleMinutes) + ' min', C.blue);
-    legend(chart.fig, [['Interarrival density', C.blue], ['No waiting: ' + pct(1 - r.waitProbability), C.pale]]);
-    bars(container, 'How many of the daily boats must wait?', r.pmf, { xlabel: 'Number of boats waiting', ylabel: 'Binomial probability', highlight: i => i >= 2, note: 'Independent waiting outcomes are assumed. Orange bars represent at least two boats waiting: ' + pct(r.atLeastTwo) + '.', legend: [['0 or 1 boat waits', C.blue], ['At least 2 wait', C.orange]] });
+    legend(chart.fig, [['PDF', C.blue], ['No wait: ' + pct(1 - r.waitProbability), C.pale]]);
+    bars(container, 'Boats waiting', r.pmf, { xlabel: 'Boats waiting', ylabel: 'Binomial probability', highlight: i => i >= 2, note: 'Assumes independent waiting outcomes.', legend: [['0–1 wait', C.blue], ['2+ wait: ' + pct(r.atLeastTwo), C.orange]] });
   }
   function q7(container, v, r) {
     const pdf = z => z > 0 ? Math.exp(-Math.sqrt(z)) / (2 * Math.sqrt(z)) : 0;
     const cdf = z => z > 0 ? 1 - Math.exp(-Math.sqrt(z)) : 0;
     const v0 = number(v, ['v0', 'meanVelocity'], 1), y = number(v, ['y', 'force'], r.k * v0 * v0), z = y / (r.k * v0 * v0);
     const xmax = Math.max(9, Math.min(25, z * 1.2));
-    const chart = plot(container, 'Squared velocity changes the density', 'Normalized drag Z = Y divided by C times v0 squared has density exp(−sqrt(z))/(2 sqrt(z)). It grows without bound near zero but has no point mass there. The plot clips that unbounded peak.', { xmin: 0, xmax, ymax: 1.5, xlabel: 'Normalized drag, z = y / (C v₀²)', note: 'The PDF tends to infinity as z approaches 0. The peak is clipped for display; P(Y = 0) is still zero.' });
+    const chart = plot(container, 'Drag PDF', 'Normalized drag Z = Y divided by C times v0 squared has density exp(−sqrt(z))/(2 sqrt(z)). It grows without bound near zero but has no point mass there. The plot clips that unbounded peak.', { xmin: 0, xmax, ymax: 1.5, xlabel: 'Normalized drag, z', note: 'Unbounded peak clipped; no point mass at 0.' });
     const sampledDensity = end => Array.from({ length: 241 }, (_, i) => { const x = Math.pow(.001 + (Math.sqrt(end) - .001) * i / 240, 2); return [x, pdf(x)]; });
     if (z > 0.000001) chart.path([[.000001, 0], ...sampledDensity(Math.min(z, xmax)), [Math.min(z, xmax), 0]], { fill: C.pale, stroke: 'none', 'fill-opacity': .7 });
-    chart.path(sampledDensity(xmax)); chart.marker(z, 'Selected z = ' + fmt(z), C.blue);
+    chart.path(sampledDensity(xmax)); chart.marker(z, 'z = ' + fmt(z), C.blue);
     text(chart.svg, chart.X(.12), 55, '↑ unbounded near 0', { fill: C.blue, 'font-size': 12 });
-    const second = plot(container, 'Transformation preserves probability', 'The exact normalized CDF is 1 − exp(−sqrt(z)). It equals ' + fmt(cdf(z)) + ' at the selected normalized force ' + fmt(z) + '.', { xmin: 0, xmax, ymax: 1.05, ylabel: 'CDF  P(Z ≤ z)', xlabel: 'Normalized drag, z = y / (C v₀²)', note: 'P(Y ≤ y) = P(V ≤ √(y/C)). At the selected force, probability = ' + pct(cdf(z)) + '.' });
+    const second = plot(container, 'Drag CDF', 'The exact normalized CDF is 1 − exp(−sqrt(z)). It equals ' + fmt(cdf(z)) + ' at the selected normalized force ' + fmt(z) + '.', { xmin: 0, xmax, ymax: 1.05, ylabel: 'F(z)', xlabel: 'Normalized drag, z', note: { text: 'FZ(z) = 1 − exp(−√z), z = y/(C v₀²) ≥ 0', tex: 'F_Z(z)=1-e^{-\\sqrt z},\\quad z=\\frac{y}{Cv_0^2}\\ge0' } });
     second.curve(cdf); second.marker(z, 'F = ' + fmt(cdf(z)), C.blue);
   }
   function beam(container, v) {
-    const frame = figure(container, 'Cantilever beam and its loads', 'A 10-foot beam is fixed at the left end. A uniformly distributed downward load W acts along its length and a downward point load P acts at its free right end. The fixed-end bending moment is M = 50W + 10P.', 'A 10 ft span gives M = W L²/2 + P L = 50W + 10P.');
+    const frame = figure(container, 'Cantilever loads', 'A 10-foot beam is fixed at the left end. A uniformly distributed downward load W acts along its length and a downward point load P acts at its free right end. The fixed-end bending moment is M = 50W + 10P.', { text: 'M = WL²/2 + PL = 50W + 10P', tex: 'M=\\frac{WL^2}{2}+PL=50W+10P' });
     const s = frame.svg; s.setAttribute('viewBox', '0 0 560 230');
     const markerId = 'beam-arrow-' + (++serial), defs = add(s, 'defs');
     add(add(defs, 'marker', { id: markerId, markerWidth: 8, markerHeight: 8, refX: 6, refY: 3, orient: 'auto', markerUnits: 'strokeWidth' }), 'path', { d: 'M0,0 L6,3 L0,6', fill: C.blue });
@@ -222,10 +230,10 @@
   }
   function q8(container, v, r) {
     beam(container, v);
-    normalFailure(container, 'The safety margin R − M', r.meanMargin, r.sdMargin, r.failureRisk, 'Safety margin R − M (ft-kips)', 'Failure occurs when resistance is smaller than the applied moment. Correlation between W and P changes the spread of M.');
+    normalFailure(container, 'Safety margin', r.meanMargin, r.sdMargin, r.failureRisk, 'Safety margin R − M (ft-kips)', { text: 'Failure: R < M', tex: '\\text{Failure: }R<M' });
   }
   function q9(container, v, r) {
-    normalFailure(container, 'Compare resistance and stress on a log scale', r.lambdaRatio, r.zetaRatio, r.failureRisk, 'Log safety ratio, ln(R/S)', 'Independent lognormal resistance and stress give a normal log ratio. Crushing occurs when ln(R/S) < 0, equivalent to R < S.');
+    normalFailure(container, 'Log safety ratio', r.lambdaRatio, r.zetaRatio, r.failureRisk, 'ln(R/S)', 'Independent lognormal resistance and stress.');
     const area = number(v, ['area', 'A'], .16);
     const xmin = Math.max(.001, Math.min(area, r.requiredArea) * .45), xmax = Math.max(area, r.requiredArea) * 1.6;
     const calc = root.TutorialCalc;
@@ -234,7 +242,7 @@
     if (typeof Phi !== 'function') return;
     const atArea = a => Phi(-(r.lambdaRatio + Math.log(a / area)) / r.zetaRatio);
     const target = number(v, ['target', 'targetRisk', 'targetProbability', 'targetFailure'], .001);
-    const chart = plot(container, 'How cross-sectional area changes risk', 'Crushing probability decreases as the area increases. The required area for the chosen target probability is ' + fmt(r.requiredArea) + ' square metres.', { xmin, xmax, ymax: Math.max(atArea(xmin) * 1.08, target * 2), ylabel: 'Crushing probability', xlabel: 'Cross-sectional area (m²)', note: 'Required area: ' + fmt(r.requiredArea) + ' m²; equivalent square side: ' + fmt(r.requiredSide) + ' m. The curve uses the same load and resistance model.' });
+    const chart = plot(container, 'Area & crushing risk', 'Crushing probability decreases as the area increases. The required area for the chosen target probability is ' + fmt(r.requiredArea) + ' square metres.', { xmin, xmax, ymax: Math.max(atArea(xmin) * 1.08, target * 2), ylabel: 'Crushing probability', xlabel: 'Cross-sectional area (m²)', note: 'Required: ' + fmt(r.requiredArea) + ' m²; square side: ' + fmt(r.requiredSide) + ' m.' });
     chart.curve(atArea); chart.marker(area, 'Chosen A = ' + fmt(area), C.blue); chart.marker(r.requiredArea, 'Target A = ' + fmt(r.requiredArea), C.orange, 51);
     chart.path([[xmin, target], [xmax, target]], { stroke: C.orange, 'stroke-width': 1.4, 'stroke-dasharray': '5 4' });
     legend(chart.fig, [['Crushing probability', C.blue], ['Target ' + pct(target), C.orange]]);
