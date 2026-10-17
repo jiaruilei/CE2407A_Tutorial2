@@ -4,13 +4,12 @@ Interactive exercises for all nine questions in Tutorial Questions Set 2, styled
 
 Live site: https://jiaruilei.github.io/CE2407A_Tutorial2/
 
-The static website is in `docs/`. GitHub Pages serves the `main` branch's `/docs` folder. It has no build dependencies or API keys. All calculations run locally in the browser. Input values and typed answers are saved only in localStorage.
+The static website is in `docs/`. GitHub Pages serves the `main` branch's `/docs` folder. It has no build dependencies or API keys. All calculations run locally in the browser. Input values are saved only in localStorage.
 
 ## Features
 
-- Nine compact question tabs with always-visible statements and editable parameters. Answers, SVG plots and working appear only after Calculate; no hints or descriptive question notes are shown.
+- Nine compact question tabs with always-visible statements and editable parameters. Answers, SVG plots and working appear only after Calculate. No hints or descriptive question notes are shown.
 - Editing an input clears the output until Calculate is clicked again.
-- Numerical answer checks accept decimal values, fractions and percentages, with rounding tolerance.
 - Reset restores the original question values and hides the output. Q7's physical values are explicitly illustrative.
 - Bundled MathJax renders given equations, input symbols, results, chart formulas and working without an external CDN. Plain-text fallbacks remain accessible.
 - Deep link with `?question=q4`; use `?question=q4&embed=1` for slides.
@@ -39,6 +38,6 @@ Content is adapted from the supplied CE2407A Tutorial Questions Set 2 and Tutori
 - Q8 makes the joint-normality assumption explicit; N(mean, SD) uses standard deviation.
 - Q9 follows the solution's independent lognormal resistance/load assumption. Exact area for failure probability 0.001 is 0.20367246 m².
 
-The numerical tests cover defaults, distribution normalization, probability boundaries, transformations, and inverse reliability design. Browser checks cover tabs, inputs, answer feedback, Calculate gating, resetting, and math rendering.
+The numerical tests cover defaults, distribution normalization, probability boundaries, transformations, and inverse reliability design. Browser checks cover tabs, inputs, Calculate gating, resetting, and math rendering.
 
 MathJax 3.2.2 is bundled from Tutorial 1. Its Apache 2.0 license is retained at `docs/assets/mathjax/LICENSE`.

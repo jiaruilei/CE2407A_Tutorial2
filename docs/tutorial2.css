@@ -24,16 +24,10 @@ a{color:var(--blue-dark);text-underline-offset:3px}
 .field-unit{display:block;font-size:12px;font-weight:400;color:var(--muted)}
 .inline-math{display:inline-block;max-width:100%;vertical-align:middle}
 .kv .inline-math{margin-left:3px}
-.control-section{margin-top:18px;padding-top:16px}
 .question-status{font-size:12px;color:var(--muted);margin:9px 0 0}
-.question-status:empty,.feedback:empty{display:none}
+.question-status:empty{display:none}
 .question-status.modified{color:var(--warn)}
 .field-error{color:var(--bad);font-size:14px;border-left:3px solid var(--bad);padding:8px 10px;margin-top:12px;background:#fef2f2}
-.check-panel select{width:100%;font-size:14px}
-.answer-row{display:flex;gap:7px;margin-top:10px;align-items:center}
-.answer-row input{flex:1;width:0;font-size:14px;padding:10px 9px}
-.answer-row button{font-size:14px;padding:10px}
-.check-panel .feedback{font-size:14px;line-height:1.5;margin-top:9px}
 .chart-stack{display:grid;gap:12px;align-items:start}
 .chart-stack figure{margin:0;min-width:0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
 .chart-stack figcaption{font-weight:700;font-size:16px;color:#172b4d;margin-bottom:6px}
