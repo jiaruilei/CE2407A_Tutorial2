@@ -19,20 +19,20 @@ The static website is in `docs/`. GitHub Pages serves the `main` branch's `/docs
 
 Prof. Gary’s AI Proxy matches Tutorial 1 and appears below each selected exercise. It keeps separate drafts and conversations for Q1–Q9, uses the current numeric inputs, and renders equations with bundled MathJax. Chat history stays in browser memory and Clear chat clears only the selected question.
 
-The shared service at https://ce2407a-tutorial1.onrender.com handles AI requests with an explicit tutorial2 selector and verified Tutorial 2 teaching context. The API key stays in the existing Render service. Only the selected question, numeric exercise inputs and recent conversation are sent. The service uses the OpenAI Responses API with store: false and the existing request limits. Tutorial 1 requests retain their original context.
+The dedicated Render service at https://ce2407a-tutorial2.onrender.com handles AI requests with an explicit tutorial2 selector and verified Tutorial 2 teaching context. It is a separate deployment from Tutorial 1's existing service and uses the same OpenAI API key, stored only in Render's environment settings. Only the selected question, numeric exercise inputs and recent conversation are sent. The service uses the OpenAI Responses API with store: false and independent request limits. Tutorial 1 remains on its existing service.
 
 The coach waits for the service to advertise Tutorial 2 support. Service failures show an unavailable message. Calculator outputs still require Calculate and chatting never reveals those outputs automatically.
 
 ## Run and verify
 
-Use Node.js 22 or newer:
+Use Node.js 22–24:
 
 ```sh
 npm run preview
 npm test
 ```
 
-The preview runs at http://127.0.0.1:4172 and proxies coach requests to the existing Render service. The exercises also work by opening `docs/index.html` directly, while the coach needs HTTP hosting and an internet connection.
+The preview runs at http://127.0.0.1:4172 and proxies coach requests to Tutorial 2's dedicated Render service. The exercises also work by opening `docs/index.html` directly, while the coach needs HTTP hosting and an internet connection.
 
 ### Standalone Tutorial 2 API
 

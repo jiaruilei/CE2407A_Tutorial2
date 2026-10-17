@@ -14,7 +14,7 @@ const server=http.createServer(async(req,res)=>{
     try{
       const chunks=[];let bytes=0;
       for await(const chunk of req){bytes+=chunk.length;if(bytes>24576){res.writeHead(413);res.end();return;}chunks.push(chunk);}
-      const response=await fetch(`https://ce2407a-tutorial1.onrender.com${requestPath}`,{
+      const response=await fetch(`https://ce2407a-tutorial2.onrender.com${requestPath}`,{
         method,headers:{'Content-Type':'application/json'},
         ...(method==='POST'?{body:Buffer.concat(chunks)}:{}),
         signal:AbortSignal.timeout(requestPath==='/health'?90000:65000)

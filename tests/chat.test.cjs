@@ -77,7 +77,7 @@ function fixture(options = {}) {
     if (originalAddEventListener === undefined) delete global.addEventListener;
     else global.addEventListener = originalAddEventListener;
   }
-  const health = async (configured, tutorials = ['tutorial1', 'tutorial2']) => {
+  const health = async (configured, tutorials = ['tutorial2']) => {
     calls[0].resolve(response({ configured, tutorials })); await controller.ready;
   };
   const fireGlobal = name => (globalListeners[name] || []).forEach(callback => callback());
@@ -121,7 +121,7 @@ test('a Tutorial 1 backend cannot appear ready or receive Tutorial 2 chat reques
     assert.equal(await p.controller.send(), false);
     assert.equal(p.elements.coachQuestion.value, 'Explain the normal distribution');
     assert.ok(p.calls.every(call => call.url.endsWith('/health')), 'old server receives no chat POST');
-    p.calls[1].resolve(response({ configured: true, tutorials: ['tutorial1', 'tutorial2'] }));
+    p.calls[1].resolve(response({ configured: true, tutorials: ['tutorial2'] }));
     await settle();
     const request = p.controller.send();
     assert.equal(p.calls[2].url, '/api/chat');
@@ -134,9 +134,9 @@ test('a Tutorial 1 backend cannot appear ready or receive Tutorial 2 chat reques
 
 test('health readiness requires an explicitly configured Tutorial 2 backend', async () => {
   for (const [configured, tutorials, expected] of [
-    [true, ['tutorial1', 'tutorial2'], 'AI online'],
-    [false, ['tutorial1', 'tutorial2'], 'AI not configured'],
-    [undefined, ['tutorial1', 'tutorial2'], 'Server unavailable'],
+    [true, ['tutorial2'], 'AI online'],
+    [false, ['tutorial2'], 'AI not configured'],
+    [undefined, ['tutorial2'], 'Server unavailable'],
     [true, [], 'Server unavailable']
   ]) {
     const p = fixture();
@@ -146,13 +146,13 @@ test('health readiness requires an explicitly configured Tutorial 2 backend', as
 });
 
 test('Q9 deep links send Tutorial 2 and numeric context to the configured Pages API', async () => {
-  const p = fixture({ initialQuestion: 'q9', location: { protocol: 'https:', hostname: 'jiaruilei.github.io' }, meta: 'https://ce2407a-tutorial1.onrender.com' });
+  const p = fixture({ initialQuestion: 'q9', location: { protocol: 'https:', hostname: 'jiaruilei.github.io' }, meta: 'https://ce2407a-tutorial2.onrender.com' });
   p.add('q9-n', 'input', { type: 'number', name: 'n' }, p.elements.q9).value = '10';
   p.add('privateNote', 'textarea', {}, p.elements.q9).value = 'Do not send this draft';
   await p.health(true);
   assert.equal(p.elements.coachQuestion.placeholder, 'Ask about Q9…');
   const pending = p.controller.send('Explain part (a).');
-  assert.equal(p.calls[1].url, 'https://ce2407a-tutorial1.onrender.com/api/chat');
+  assert.equal(p.calls[1].url, 'https://ce2407a-tutorial2.onrender.com/api/chat');
   const payload = JSON.parse(p.calls[1].settings.body);
   assert.equal(payload.question, 'q9');
   assert.equal(payload.tutorial, 'tutorial2');
@@ -340,7 +340,7 @@ test('Enter submits, Shift+Enter and IME composition retain multiline editing', 
 test('a delayed startup health result cannot overwrite a successful live reply', async () => {
   const p = fixture();
   assert.equal(await p.controller.send('Hello'), false);
-  p.calls[1].resolve(response({ configured: true, tutorials: ['tutorial1', 'tutorial2'] }));
+  p.calls[1].resolve(response({ configured: true, tutorials: ['tutorial2'] }));
   await settle();
   const request = p.controller.send('Hello');
   p.calls[2].resolve(response({ tutorial: 'tutorial2', answer: 'Ready.' })); await request;
