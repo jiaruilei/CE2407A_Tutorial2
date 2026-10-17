@@ -8,7 +8,7 @@ The static website is in `docs/`. GitHub Pages serves the `main` branch's `/docs
 
 ## Features
 
-- Nine compact question tabs, editable parameters and live SVG plots. Question statements, hints and working expand on demand.
+- Nine compact question tabs, editable parameters and live SVG plots. Question statements stay visible; hints and working expand on demand.
 - Numerical answer checks accept decimal values, fractions and percentages, with rounding tolerance.
 - Reset restores the original question values; Q7's physical values are explicitly illustrative.
 - Bundled MathJax renders model equations, input symbols, results, chart formulas, hints and working without an external CDN. Plain-text fallbacks remain accessible.
