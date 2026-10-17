@@ -1,0 +1,9 @@
+.openai/
+node_modules/
+tmp/
+*.log
+*.tar.gz
+*.zip
+*.pdf
+.env
+.env.*

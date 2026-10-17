@@ -1,0 +1,55 @@
+.header-meta{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+a{color:var(--blue-dark);text-underline-offset:3px}
+.header-meta a{font-size:14px}
+.section-heading .eyebrow{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 7px}
+.question-body{font-size:16px;line-height:1.6;max-width:1050px;color:#27364b}
+.question-body ul{margin:12px 0 0;padding-left:20px;list-style:none}
+.question-body li{margin:8px 0}
+.question-body p{color:#27364b}
+.controls .kv{gap:12px}
+.controls .kv input{width:118px}
+.controls h3{margin-bottom:15px}
+.model-note{font-size:14px;line-height:1.6;color:var(--muted);margin:16px 0 0}
+.field-error{color:var(--bad);font-size:14px;border-left:3px solid var(--bad);padding:8px 12px;margin:14px 0 0;background:#fef2f2}
+.chart-stack{display:grid;gap:16px}
+.chart-stack figure{margin:0;border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px;min-width:0}
+.chart-stack figcaption{font-weight:700;font-size:17px;color:#172b4d;margin-bottom:8px}
+.chart-stack svg{width:100%;height:auto;display:block;overflow:visible}
+.chart-stack p,.chart-stack .chart-note,.chart-stack .chart-legend{font-size:13px;line-height:1.5;color:var(--muted);margin:8px 0 0}
+.chart-stack .chart-legend{display:flex;gap:14px;flex-wrap:wrap}
+.chart-stack svg text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.chart-stack .chart-title{font-weight:700}
+.chart-stack + .card{margin-top:16px}
+.result-table{width:100%;border-collapse:collapse;font-size:16px;font-variant-numeric:tabular-nums}
+.result-table th,.result-table td{padding:10px 0;border-bottom:1px solid #edf1f6;text-align:left;vertical-align:top}
+.result-table th{font-weight:500;color:var(--muted);padding-right:18px}
+.result-table td{font-weight:700;color:var(--blue-dark);text-align:right}
+.result-table tr:last-child>*{border:0}
+.result-table .unit{font-size:12px;font-weight:400;display:block;color:var(--muted)}
+.result-placeholder{font-size:15px;color:var(--muted);line-height:1.6;margin:0}
+.check-panel label{display:block;margin:10px 0 7px}
+.check-panel select,.check-panel input{width:100%;max-width:100%}
+.check-panel select{font-size:15px}
+.check-panel input{margin-top:0}
+.check-panel .feedback{line-height:1.6}
+.hint-panel{margin:0 24px 24px;padding:20px 22px;background:#f8fafc;border:1px solid var(--line);border-radius:14px}
+.hint-panel h3{margin:0 0 8px}
+.hint-panel p{font-size:15px;color:var(--muted);line-height:1.6;margin:0}
+.hint-panel .actions{margin-top:12px}
+.hint-text{background:#fff;border-left:3px solid var(--accent);padding:14px 16px;margin-top:14px!important;color:#27364b!important}
+.live-label{font-size:13px;color:var(--muted);font-weight:400}
+.working{margin-top:16px}
+.working .math-text{font-size:15px;line-height:1.7;color:var(--muted)}
+.working .math-row{margin:13px 0}
+.question-status{font-size:13px;margin:10px 0 0;color:var(--muted)}
+.question-status.modified{color:var(--warn)}
+footer{border-top:1px solid var(--line);padding:20px 24px;display:flex;gap:12px 24px;flex-wrap:wrap;justify-content:space-between;font-size:12px;color:var(--muted)}
+.skip-link{position:absolute;left:15px;top:-100px;background:#fff;z-index:20;padding:10px}
+.skip-link:focus{top:10px}
+.notice{padding:24px}
+.tab-btn{font-size:15px;padding:10px 12px}
+.tabs{gap:7px}
+.tutorial-embed .hint-panel{margin-top:18px}
+@media(min-width:1300px){.chart-stack.paired{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){.hint-panel{margin:0 18px 18px}.header-meta{gap:5px}.header-meta a{margin-top:4px}.tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.tab-btn{font-size:13px;padding:9px 5px}.controls .kv input{width:130px}.section-heading details{margin-top:12px}}
+@media(max-width:480px){.tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.chart-stack figure{padding:12px 8px}.controls .kv{grid-template-columns:minmax(0,1fr) 112px}.controls .kv input{width:112px}.result-table{font-size:14px}.result-table th{padding-right:8px}.hint-panel{padding:16px}.section-heading p{font-size:15px}footer{padding:18px}.chart-stack svg text{font-size:13px}}
