@@ -7,3 +7,4 @@ tmp/
 *.pdf
 .env
 .env.*
+!.env.example

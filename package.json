@@ -3,5 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "Interactive CE2407A Tutorial Set 2",
-  "scripts": {"start": "node preview.mjs", "test": "node --test"}
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "preview": "node preview.mjs",
+    "test": "node --test"
+  },
+  "engines": {"node": ">=22 <25"}
 }

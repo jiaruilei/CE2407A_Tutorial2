@@ -28,11 +28,19 @@ The coach waits for the service to advertise Tutorial 2 support. Service failure
 Use Node.js 22 or newer:
 
 ```sh
-npm start
+npm run preview
 npm test
 ```
 
 The preview runs at http://127.0.0.1:4172 and proxies coach requests to the existing Render service. The exercises also work by opening `docs/index.html` directly, while the coach needs HTTP hosting and an internet connection.
+
+### Standalone Tutorial 2 API
+
+`server.mjs` provides a separate Tutorial 2 API and serves the website from `docs/`. It accepts Q1–Q9 for `tutorial2`, rejects other tutorial selectors, and advertises only Tutorial 2 in `/health`. Its request limits are independent of any other service instance.
+
+For local development, copy `.env.example` to an ignored `.env`, set `OPENAI_API_KEY`, and run `npm start`. The server listens on port 3000 unless `PORT` is set. Without a key, the exercises still work and the coach reports that it is not configured.
+
+For Render, use the Node runtime, `npm test` as the build command, `npm start` as the start command, and `/health` as the HTTP health check. Set the key in Render's environment settings. Keep keys out of the repository and browser assets.
 
 ## Source and numerical notes
 
