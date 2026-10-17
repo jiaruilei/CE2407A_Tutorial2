@@ -3,17 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="tutorial-api-base" content="https://ce2407a-tutorial1.onrender.com">
   <meta name="description" content="Interactive CE2407A Tutorial 2: nine exercises on random variables, probability distributions, transformations and reliability.">
   <title>CE2407A Tutorial 2 · Random variables & distributions</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%232563eb'/%3E%3Ctext x='20' y='28' text-anchor='middle' fill='white' font-size='25' font-family='sans-serif'%3E2%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="tutorial2.css?v=20261017-inputs">
+  <link rel="stylesheet" href="tutorial2.css?v=20261017-coach">
+  <link rel="stylesheet" href="chat.css?v=20261017-coach">
   <script src="math-rendering.js"></script>
   <script defer src="assets/mathjax/tex-svg.js"></script>
   <script defer src="calculations.js"></script>
-  <script defer src="content.js?v=20261017-inputs"></script>
-  <script defer src="charts.js?v=20261017-inputs"></script>
-  <script defer src="app.js?v=20261017-inputs"></script>
+  <script defer src="content.js?v=20261017-coach"></script>
+  <script defer src="charts.js?v=20261017-coach"></script>
+  <script defer src="app.js?v=20261017-coach"></script>
+  <script defer src="chat.js?v=20261017-coach"></script>
 </head>
 <body>
 <a class="skip-link" href="#exercise">Skip to exercise</a>
@@ -26,9 +29,26 @@
   <main id="exercise" tabindex="-1">
     <noscript><p class="notice">Enable JavaScript to use the interactive exercises.</p></noscript>
   </main>
+  <section class="coach-card" aria-labelledby="coachTitle">
+    <div class="coach-header">
+      <h2 class="coach-title" id="coachTitle"><span class="coach-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 4h16v12H9l-5 4V4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 8h8M8 12h5"/></svg></span>Prof. Gary’s AI Proxy</h2>
+      <span class="coach-status" id="coachStatus" role="status">Checking server…</span>
+    </div>
+    <div class="coach-toolbar"><button type="button" id="coachClear" class="secondary">Clear chat</button></div>
+    <div class="coach-log" id="coachLog" role="log" aria-live="polite" aria-label="Tutorial 2 conversation"></div>
+    <div class="coach-chips" aria-label="Suggested questions">
+      <button type="button" data-question="Explain the key idea in this question briefly.">Explain the idea</button>
+      <button type="button" data-question="Check my current inputs and working for this question.">Check my working</button>
+      <button type="button" data-question="Explain the formula for this question.">Explain the formula</button>
+      <button type="button" data-question="What is the next step? Keep it brief.">Next step</button>
+    </div>
+    <form class="coach-form" id="coachForm">
+      <textarea id="coachQuestion" maxlength="800" placeholder="Ask about Q1…" aria-label="Question for Prof. Gary’s AI Proxy"></textarea>
+      <button type="submit" id="coachSend">Ask</button>
+    </form>
+  </section>
   <footer>
     <span>CE2407A · Tutorial Set 2</span>
-    <a href="https://github.com/jiaruilei/CE2407A_Tutorial2" target="_blank" rel="noopener">Source code</a>
   </footer>
 </div>
 </body>
